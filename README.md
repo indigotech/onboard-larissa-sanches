@@ -1,6 +1,20 @@
-# Getting Started with Create React App
+# Onboard Web Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Onboard Web Application é um projeto de treinamento para estágio na empresa Taqtile. O objetivo é criar uma aplicação web capaz de rodar em navegadores modernos e realizar operações CRUD (Create, Read, Update, Delete) para gerenciar usuários.
+
+## Getting Started
+
+Este projeto foi inicialmente configurado com [Create React App](https://github.com/facebook/create-react-app).
+
+## Environment and Tools
+
+- **Editor:** Visual Studio Code (VS Code)
+- **Linguagem:** TypeScript
+- **Framework/Library:** React
+- **Gerenciador de Pacotes:** npm ou yarn
+- **Sistema de Controle de Versão:** Git
+- **Node.js Version:** v18.17.1
+- **Editor de Código:** Visual Studio Code com extensões para ESLint e Prettier instaladas
 
 ## Available Scripts
 
@@ -44,3 +58,9 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## Steps to Run and Debug
+
+1. **Clone o Repositório:**
+   ```bash
+   git clone https://github.com/indigotech/onboard-larissa-sanches.git
