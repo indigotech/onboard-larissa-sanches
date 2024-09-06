@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation, ApolloError } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
 import { LOGIN_MUTATION } from './mutations';
 
 interface ValidationErrors {
@@ -19,6 +20,7 @@ export default function Login() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [login, { loading }] = useMutation(LOGIN_MUTATION);
+  const navigate = useNavigate();
 
   const validateFields = (): boolean => {
     const newErrors: ValidationErrors = {};
@@ -53,6 +55,9 @@ export default function Login() {
           localStorage.setItem('authToken', token);
           setSuccessMessage('Login bem-sucedido!');
           setLoginError(null);
+          navigate('/home');
+        } else {
+          setLoginError('Falha ao obter token de autenticação.');
         }
       } catch (err) {
         if (err instanceof ApolloError) {
