@@ -3,7 +3,9 @@
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
-    "prettier"
+    "prettier",
+    "react-app",
+    "react-app/jest"
   ],
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint", "react"],
@@ -18,5 +20,7 @@
     "ecmaVersion": 12,
     "sourceType": "module"
   },
-  "rules": {}
+  "rules": {
+    "react/react-in-jsx-scope": "off"
+  }
 }
