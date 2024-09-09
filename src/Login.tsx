@@ -57,8 +57,8 @@ export default function Login() {
       } catch (err) {
         if (err instanceof ApolloError) {
           const graphqlErrors = err.graphQLErrors.map((error) => ({
-            name: error.extensions?.code || 'Error',
-            message: error.message || 'Erro inesperado',
+            name: error.extensions?.code ?? 'Error',
+            message: error.message ?? 'Erro inesperado',
           })) as GraphQLError[];
 
           if (graphqlErrors.length > 0) {
