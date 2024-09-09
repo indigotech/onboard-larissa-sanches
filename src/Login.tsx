@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useMutation, ApolloError } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import { LOGIN_MUTATION } from './mutations';
+import LoadingButton from './LoadingButton';
 
 interface ValidationErrors {
   email?: string;
@@ -117,9 +118,9 @@ export default function Login() {
             </p>
           )}
         </div>
-        <button type="submit" disabled={loading}>
-          {loading ? 'Carregando...' : 'Enviar'}
-        </button>
+        <LoadingButton isLoading={loading} type="submit">
+          Enviar
+        </LoadingButton>
         {loginError && <p style={{ color: 'red' }}>Erro: {loginError}</p>}
       </form>
       {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
