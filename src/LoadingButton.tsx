@@ -1,25 +1,25 @@
 import React from 'react';
 
 interface LoadingButtonProps {
-  isLoading: boolean;
-  children: React.ReactNode;
+  loading: boolean;
+  children: string;
   type?: 'button' | 'submit' | 'reset';
 }
 
 const LoadingButton: React.FC<LoadingButtonProps> = ({
-  isLoading,
+  loading,
   children,
   type = 'button',
 }) => {
   return (
-    <button type={type} disabled={isLoading}>
-      {isLoading ? (
+    <button type={type} disabled={loading}>
+      {loading ? (
         <>
           Carregando...
           <span className="loading-spinner" />
         </>
       ) : (
-        children
+        <span>{children}</span>
       )}
     </button>
   );
