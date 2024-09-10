@@ -3,10 +3,30 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  createHttpLink,
+} from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+
+const httpLink = createHttpLink({
+  uri: 'https://template-onboarding-node-sjz6wnaoia-uc.a.run.app/graphql',
+});
+
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem('authToken');
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? token : '',
+    },
+  };
+});
 
 const client = new ApolloClient({
-  uri: 'https://template-onboarding-node-sjz6wnaoia-uc.a.run.app/graphql',
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 
@@ -21,7 +41,7 @@ root.render(
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+// Se você quiser começar a medir o desempenho no seu aplicativo, passe uma função
+// para registrar os resultados (por exemplo: reportWebVitals(console.log))
+// ou envie para um endpoint de análise. Saiba mais: https://bit.ly/CRA-vitals
 reportWebVitals();
