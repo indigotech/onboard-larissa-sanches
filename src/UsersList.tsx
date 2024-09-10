@@ -12,16 +12,16 @@ const fakeUsers: User[] = [
 ];
 
 const UsersList: React.FC = () => {
+  const userList = fakeUsers.map((user, index) => (
+    <li key={index}>
+      {user.name} - {user.email}
+    </li>
+  ));
+
   return (
     <div>
       <h1>Lista de Usuários</h1>
-      <ul>
-        {fakeUsers.map((user, index) => (
-          <li key={index}>
-            <strong>{user.name}</strong> - {user.email}
-          </li>
-        ))}
-      </ul>
+      <ul>{userList}</ul>
     </div>
   );
 };
