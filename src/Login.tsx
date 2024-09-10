@@ -118,7 +118,7 @@ export default function Login() {
             </p>
           )}
         </div>
-        <LoadingButton isLoading={loading} type="submit">
+        <LoadingButton loading={loading} type="submit">
           Enviar
         </LoadingButton>
         {loginError && <p style={{ color: 'red' }}>Erro: {loginError}</p>}
