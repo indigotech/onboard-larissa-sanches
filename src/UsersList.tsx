@@ -11,11 +11,6 @@ interface User {
 const UsersList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const { loading, error, data, refetch } = useQuery(USERS_QUERY, {
-    context: {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-      },
-    },
     fetchPolicy: 'network-only',
   });
 
