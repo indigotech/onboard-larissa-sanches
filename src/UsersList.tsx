@@ -8,14 +8,43 @@ interface User {
   name: string;
 }
 
+interface PageInfo {
+  offset: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+interface UsersData {
+  users: {
+    nodes: User[];
+    pageInfo: PageInfo;
+    count: number;
+  };
+}
+
+interface PageInput {
+  offset: number;
+  limit: number;
+}
+
 const UsersList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const { loading, error, data, refetch } = useQuery(USERS_QUERY, {
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(20);
+
+  const { loading, error, data, refetch } = useQuery<UsersData>(USERS_QUERY, {
+    variables: {
+      data: {
+        offset: (page - 1) * pageSize,
+        limit: pageSize,
+      } as PageInput,
+    },
     fetchPolicy: 'network-only',
   });
 
   useEffect(() => {
-    if (data?.users?.nodes) {
+    if (data && data.users) {
       setUsers(data.users.nodes);
     }
   }, [data]);
@@ -23,6 +52,20 @@ const UsersList: React.FC = () => {
   const handleRetry = () => {
     refetch();
   };
+
+  const handleNextPage = () => {
+    if (data?.users?.pageInfo.hasNextPage) {
+      setPage(page + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  };
+
+  const totalPages = Math.ceil((data?.users?.count || 0) / pageSize);
 
   if (loading) return <p>Carregando...</p>;
 
@@ -57,6 +100,21 @@ const UsersList: React.FC = () => {
           <p>Não há usuários para exibir.</p>
         )}
       </ul>
+      <div>
+        <button onClick={handlePreviousPage} disabled={page === 1}>
+          Anterior
+        </button>
+        <span>
+          {' '}
+          {page} de {totalPages} páginas{' '}
+        </span>
+        <button
+          onClick={handleNextPage}
+          disabled={!data?.users?.pageInfo.hasNextPage}
+        >
+          Próxima
+        </button>
+      </div>
     </div>
   );
 };
