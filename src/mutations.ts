@@ -11,3 +11,15 @@ export const LOGIN_MUTATION = gql`
     }
   }
 `;
+export const ADD_USER_MUTATION = gql`
+  mutation AddUser($data: UserInput!) {
+    addUser(data: $data) {
+      id
+      name
+      phone
+      birthDate
+      email
+      role
+    }
+  }
+`;

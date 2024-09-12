@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { USERS_QUERY } from './queries';
+import { useNavigate } from 'react-router-dom';
 
 interface User {
   id: string;
@@ -42,6 +43,8 @@ const UsersList: React.FC = () => {
     },
     fetchPolicy: 'network-only',
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (data && data.users) {
@@ -115,6 +118,7 @@ const UsersList: React.FC = () => {
           Próxima
         </button>
       </div>
+      <button onClick={() => navigate('/add-user')}>Adicionar Usuário</button>
     </div>
   );
 };
