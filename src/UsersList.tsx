@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { USERS_QUERY } from './queries';
 
@@ -29,7 +29,6 @@ interface PageInput {
 }
 
 const UsersList: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(20);
 
@@ -42,12 +41,6 @@ const UsersList: React.FC = () => {
     },
     fetchPolicy: 'network-only',
   });
-
-  useEffect(() => {
-    if (data && data.users) {
-      setUsers(data.users.nodes);
-    }
-  }, [data]);
 
   const handleRetry = () => {
     refetch();
@@ -90,8 +83,8 @@ const UsersList: React.FC = () => {
     <div>
       <h2>Lista de Usuários</h2>
       <ul>
-        {users.length > 0 ? (
-          users.map((user) => (
+        {data?.users?.nodes.length ? (
+          data.users.nodes.map((user) => (
             <li key={user.id}>
               <strong>{user.name}</strong> - {user.email}
             </li>
