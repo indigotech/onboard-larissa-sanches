@@ -4,6 +4,9 @@ import { CREATE_USER_MUTATION } from './mutations';
 import { useNavigate } from 'react-router-dom';
 import LoadingButton from './LoadingButton';
 
+const MAX_BIRTH_DATE = new Date().toISOString().split('T')[0];
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 interface ValidationErrors {
   name?: string;
   phone?: string;
@@ -55,7 +58,7 @@ const AddUser: React.FC = () => {
       newErrors.role = 'O cargo deve ser um dos seguintes: admin, user.';
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!EMAIL_REGEX.test(email)) {
       newErrors.email = 'O e-mail deve ser válido.';
     }
 
@@ -164,7 +167,7 @@ const AddUser: React.FC = () => {
               onChange={(e) => setBirthDate(e.target.value)}
               required
               min="1900-01-01"
-              max={new Date().toISOString().split('T')[0]}
+              max={MAX_BIRTH_DATE}
               aria-invalid={!!errors.birthDate}
               aria-describedby="birthDate-error"
             />

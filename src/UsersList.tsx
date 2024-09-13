@@ -100,10 +100,7 @@ const UsersList: React.FC = () => {
         <button onClick={handlePreviousPage} disabled={page === 1}>
           Anterior
         </button>
-        <span>
-          {' '}
-          {page} de {totalPages} páginas{' '}
-        </span>
+        <span>{`${page} de ${totalPages} páginas`}</span>
         <button
           onClick={handleNextPage}
           disabled={!data?.users?.pageInfo.hasNextPage}
