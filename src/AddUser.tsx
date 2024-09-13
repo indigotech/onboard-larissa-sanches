@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+import { useMutation, ApolloError } from '@apollo/client';
+import { CREATE_USER_MUTATION } from './mutations';
+import { useNavigate } from 'react-router-dom';
+import LoadingButton from './LoadingButton';
 
 const MAX_BIRTH_DATE = new Date().toISOString().split('T')[0];
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -9,6 +13,13 @@ interface ValidationErrors {
   birthDate?: string;
   email?: string;
   role?: string;
+  password?: string;
+  server?: string;
+}
+
+interface GraphQLError {
+  name: string;
+  message: string;
 }
 
 const AddUser: React.FC = () => {
@@ -17,8 +28,11 @@ const AddUser: React.FC = () => {
   const [birthDate, setBirthDate] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('');
+  const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [addUser, { loading }] = useMutation(CREATE_USER_MUTATION);
+  const navigate = useNavigate();
 
   const validateFields = (): boolean => {
     const newErrors: ValidationErrors = {};
@@ -39,25 +53,68 @@ const AddUser: React.FC = () => {
       newErrors.birthDate = 'A data de nascimento não pode ser no futuro.';
     }
 
-    const validRoles = ['ADMIN', 'USER'];
-    if (!validRoles.includes(role)) {
-      newErrors.role =
-        'O cargo deve ser um dos seguintes: ADMINISTRADOR, USUÁRIO.';
+    const validRoles = ['admin', 'user'];
+    if (!validRoles.includes(role.toLowerCase())) {
+      newErrors.role = 'O cargo deve ser um dos seguintes: admin, user.';
     }
 
     if (!EMAIL_REGEX.test(email)) {
       newErrors.email = 'O e-mail deve ser válido.';
     }
 
+    if (!password) {
+      newErrors.password = 'A senha é obrigatória.';
+    } else if (password.length < 7) {
+      newErrors.password = 'A senha deve ter pelo menos 7 caracteres.';
+    } else if (!/\d/.test(password) || !/[a-zA-Z]/.test(password)) {
+      newErrors.password =
+        'A senha deve conter pelo menos um dígito e uma letra.';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (validateFields()) {
-      setSuccessMessage('Usuário adicionado com sucesso!');
-      setErrors({});
+      try {
+        await addUser({
+          variables: {
+            data: {
+              name,
+              phone,
+              birthDate,
+              email,
+              password,
+              role,
+            },
+          },
+        });
+        setSuccessMessage('Usuário adicionado com sucesso!');
+        setErrors({});
+        navigate('/home');
+      } catch (err) {
+        console.error('Error details:', err);
+
+        if (err instanceof ApolloError) {
+          const graphqlErrors = err.graphQLErrors.map((error) => ({
+            name: error.extensions?.code ?? 'Error',
+            message: error.message ?? 'Erro inesperado',
+          })) as GraphQLError[];
+
+          if (graphqlErrors.length > 0) {
+            setErrors({ server: graphqlErrors[0].message });
+          } else {
+            setErrors({ server: 'Erro inesperado ao adicionar usuário.' });
+          }
+        } else {
+          setErrors({
+            server: 'Erro desconhecido. Tente novamente mais tarde.',
+          });
+        }
+        setSuccessMessage(null);
+      }
     }
   };
 
@@ -141,6 +198,24 @@ const AddUser: React.FC = () => {
         </div>
         <div>
           <label>
+            Senha:
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              aria-invalid={!!errors.password}
+              aria-describedby="password-error"
+            />
+          </label>
+          {errors.password && (
+            <p id="password-error" style={{ color: 'red' }}>
+              {errors.password}
+            </p>
+          )}
+        </div>
+        <div>
+          <label>
             Cargo:
             <select
               value={role}
@@ -150,8 +225,8 @@ const AddUser: React.FC = () => {
               aria-describedby="role-error"
             >
               <option value="">Selecione um cargo</option>
-              <option value="ADMIN">Administrador</option>
-              <option value="USER">Usuário</option>
+              <option value="admin">Administrador</option>
+              <option value="user">Usuário</option>
             </select>
           </label>
           {errors.role && (
@@ -160,8 +235,11 @@ const AddUser: React.FC = () => {
             </p>
           )}
         </div>
-        <button type="submit">Adicionar Usuário</button>
+        <LoadingButton type="submit" loading={loading}>
+          Adicionar Usuário
+        </LoadingButton>
       </form>
+      {errors.server && <p style={{ color: 'red' }}>Erro: {errors.server}</p>}
       {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
     </div>
   );
