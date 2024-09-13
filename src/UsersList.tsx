@@ -89,7 +89,12 @@ const UsersList: React.FC = () => {
         {data?.users?.nodes.length ? (
           data.users.nodes.map((user) => (
             <li key={user.id}>
-              <strong>{user.name}</strong> - {user.email}
+              <a
+                href={`/user/${user.id}`}
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <strong>{user.name}</strong> - {user.email}
+              </a>
             </li>
           ))
         ) : (
