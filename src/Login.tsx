@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { useMutation, ApolloError } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
 import { LOGIN_MUTATION } from './mutations';
-import LoadingButton from './LoadingButton';
+import Button from './components/Button';
+import FormField from './components/FormField';
+import H1 from './components/H1';
 
 interface ValidationErrors {
   email?: string;
@@ -80,47 +82,27 @@ export default function Login() {
 
   return (
     <div>
-      <h1>Bem-vindo(a) à Taqtile!</h1>
+      <H1>Bem-vindo(a) à Taqtile!</H1>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>
-            Email:
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              aria-invalid={!!errors.email}
-              aria-describedby="email-error"
-            />
-          </label>
-          {errors.email && (
-            <p id="email-error" style={{ color: 'red' }}>
-              {errors.email}
-            </p>
-          )}
-        </div>
-        <div>
-          <label>
-            Senha:
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              aria-invalid={!!errors.password}
-              aria-describedby="password-error"
-            />
-          </label>
-          {errors.password && (
-            <p id="password-error" style={{ color: 'red' }}>
-              {errors.password}
-            </p>
-          )}
-        </div>
-        <LoadingButton loading={loading} type="submit">
-          Enviar
-        </LoadingButton>
+        <FormField
+          label="Email:"
+          type="email"
+          placeholder="Digite seu email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={errors.email}
+        />
+        <FormField
+          label="Senha:"
+          type="password"
+          placeholder="Digite sua senha"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          error={errors.password}
+        />
+        <Button type="submit" disabled={loading}>
+          {loading ? 'Carregando...' : 'Enviar'}
+        </Button>
         {loginError && <p style={{ color: 'red' }}>Erro: {loginError}</p>}
       </form>
       {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}

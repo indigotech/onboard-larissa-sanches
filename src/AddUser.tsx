@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { useMutation, ApolloError } from '@apollo/client';
 import { CREATE_USER_MUTATION } from './mutations';
 import { useNavigate } from 'react-router-dom';
-import LoadingButton from './LoadingButton';
+import Button from './components/Button';
+import H1 from './components/H1';
+import FormField from './components/FormField';
+
+const MAX_BIRTH_DATE = new Date().toISOString().split('T')[0];
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 interface ValidationErrors {
   name?: string;
@@ -55,7 +60,7 @@ const AddUser: React.FC = () => {
       newErrors.role = 'O cargo deve ser um dos seguintes: admin, user.';
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!EMAIL_REGEX.test(email)) {
       newErrors.email = 'O e-mail deve ser válido.';
     }
 
@@ -117,124 +122,60 @@ const AddUser: React.FC = () => {
 
   return (
     <div>
-      <h1>Adicionar Novo Usuário</h1>
+      <H1>Adicionar Novo Usuário</H1>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>
-            Nome:
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              aria-invalid={!!errors.name}
-              aria-describedby="name-error"
-            />
-          </label>
-          {errors.name && (
-            <p id="name-error" style={{ color: 'red' }}>
-              {errors.name}
-            </p>
-          )}
-        </div>
-        <div>
-          <label>
-            Telefone:
-            <input
-              type="text"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-              aria-invalid={!!errors.phone}
-              aria-describedby="phone-error"
-            />
-          </label>
-          {errors.phone && (
-            <p id="phone-error" style={{ color: 'red' }}>
-              {errors.phone}
-            </p>
-          )}
-        </div>
-        <div>
-          <label>
-            Data de Nascimento:
-            <input
-              type="date"
-              value={birthDate}
-              onChange={(e) => setBirthDate(e.target.value)}
-              required
-              min="1900-01-01"
-              max={new Date().toISOString().split('T')[0]}
-              aria-invalid={!!errors.birthDate}
-              aria-describedby="birthDate-error"
-            />
-          </label>
-          {errors.birthDate && (
-            <p id="birthDate-error" style={{ color: 'red' }}>
-              {errors.birthDate}
-            </p>
-          )}
-        </div>
-        <div>
-          <label>
-            E-mail:
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              aria-invalid={!!errors.email}
-              aria-describedby="email-error"
-            />
-          </label>
-          {errors.email && (
-            <p id="email-error" style={{ color: 'red' }}>
-              {errors.email}
-            </p>
-          )}
-        </div>
-        <div>
-          <label>
-            Senha:
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              aria-invalid={!!errors.password}
-              aria-describedby="password-error"
-            />
-          </label>
-          {errors.password && (
-            <p id="password-error" style={{ color: 'red' }}>
-              {errors.password}
-            </p>
-          )}
-        </div>
-        <div>
-          <label>
-            Cargo:
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              required
-              aria-invalid={!!errors.role}
-              aria-describedby="role-error"
-            >
-              <option value="">Selecione um cargo</option>
-              <option value="admin">Administrador</option>
-              <option value="user">Usuário</option>
-            </select>
-          </label>
-          {errors.role && (
-            <p id="role-error" style={{ color: 'red' }}>
-              {errors.role}
-            </p>
-          )}
-        </div>
-        <LoadingButton type="submit" loading={loading}>
+        <FormField
+          label="Nome"
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          error={errors.name}
+        />
+        <FormField
+          label="Telefone"
+          type="text"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          error={errors.phone}
+        />
+        <FormField
+          label="Data de Nascimento"
+          type="date"
+          value={birthDate}
+          onChange={(e) => setBirthDate(e.target.value)}
+          error={errors.birthDate}
+          min="1900-01-01"
+          max={MAX_BIRTH_DATE}
+        />
+        <FormField
+          label="E-mail"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={errors.email}
+        />
+        <FormField
+          label="Senha"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          error={errors.password}
+        />
+        <FormField
+          label="Cargo"
+          type="select"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          error={errors.role}
+          options={[
+            { value: '', label: 'Selecione um cargo' },
+            { value: 'admin', label: 'Administrador' },
+            { value: 'user', label: 'Usuário' },
+          ]}
+        />
+        <Button type="submit" loading={loading}>
           Adicionar Usuário
-        </LoadingButton>
+        </Button>
       </form>
       {errors.server && <p style={{ color: 'red' }}>Erro: {errors.server}</p>}
       {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
