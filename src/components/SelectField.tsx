@@ -1,15 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 
-interface FormFieldProps {
+interface SelectFieldProps {
   label: string;
-  type?: string;
-  placeholder?: string;
-  value?: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   error?: string;
-  min?: string;
-  max?: string;
+  options: { value: string; label: string }[];
 }
 
 const Label = styled.label`
@@ -20,7 +17,7 @@ const Label = styled.label`
   margin: 12px 16px;
 `;
 
-const Input = styled.input<{ hasError?: boolean }>`
+const Select = styled.select<{ hasError?: boolean }>`
   width: 100%;
   max-width: 250px;
   padding: 8px;
@@ -38,31 +35,26 @@ const ErrorText = styled.p`
   margin: 0 16px;
 `;
 
-const FormField: React.FC<FormFieldProps> = ({
+const SelectField: React.FC<SelectFieldProps> = ({
   label,
-  type = 'text',
-  placeholder = '',
   value,
   onChange,
   error,
-  min,
-  max,
+  options,
 }) => {
   return (
     <div>
       <Label>{label}</Label>
-      <Input
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        min={min}
-        max={max}
-        hasError={!!error}
-      />
+      <Select value={value} onChange={onChange} hasError={!!error}>
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </Select>
       {error && <ErrorText>{error}</ErrorText>}
     </div>
   );
 };
 
-export default FormField;
+export default SelectField;

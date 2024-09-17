@@ -4,7 +4,8 @@ import { CREATE_USER_MUTATION } from './mutations';
 import { useNavigate } from 'react-router-dom';
 import Button from './components/Button';
 import H1 from './components/H1';
-import FormField from './components/FormField';
+import FormField from './components/FormField'; // Importando FormField
+import SelectField from './components/SelectField'; // Importando SelectField
 
 const MAX_BIRTH_DATE = new Date().toISOString().split('T')[0];
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -161,9 +162,8 @@ const AddUser: React.FC = () => {
           onChange={(e) => setPassword(e.target.value)}
           error={errors.password}
         />
-        <FormField
+        <SelectField
           label="Cargo"
-          type="select"
           value={role}
           onChange={(e) => setRole(e.target.value)}
           error={errors.role}
@@ -173,12 +173,12 @@ const AddUser: React.FC = () => {
             { value: 'user', label: 'Usuário' },
           ]}
         />
-        <Button type="submit" loading={loading}>
-          Adicionar Usuário
+        {errors.server && <p>{errors.server}</p>}
+        {successMessage && <p>{successMessage}</p>}
+        <Button type="submit" disabled={loading}>
+          {loading ? 'Adicionando...' : 'Adicionar Usuário'}
         </Button>
       </form>
-      {errors.server && <p style={{ color: 'red' }}>Erro: {errors.server}</p>}
-      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
     </div>
   );
 };
