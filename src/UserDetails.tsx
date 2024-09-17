@@ -2,6 +2,9 @@ import React from 'react';
 import { useQuery } from '@apollo/client';
 import { useParams } from 'react-router-dom';
 import { USER_QUERY } from './queries';
+import Button from './components/Button';
+import H1 from './components/H1';
+import styled from 'styled-components';
 
 interface User {
   id: string;
@@ -11,6 +14,15 @@ interface User {
   email: string;
   role: string;
 }
+
+const DetailsContainer = styled.div`
+  padding: 16px;
+`;
+
+const DetailItem = styled.p`
+  font-size: 16px;
+  margin: 8px 0;
+`;
 
 const UserDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,25 +52,25 @@ const UserDetails: React.FC = () => {
   const { name, phone, birthDate, email, role } = data.user;
 
   return (
-    <div>
-      <h2>Detalhes do Usuário</h2>
-      <p>
+    <DetailsContainer>
+      <H1>Detalhes do Usuário</H1>
+      <DetailItem>
         <strong>Nome:</strong> {name}
-      </p>
-      <p>
+      </DetailItem>
+      <DetailItem>
         <strong>Telefone:</strong> {phone}
-      </p>
-      <p>
+      </DetailItem>
+      <DetailItem>
         <strong>Data de Nascimento:</strong> {birthDate}
-      </p>
-      <p>
+      </DetailItem>
+      <DetailItem>
         <strong>Email:</strong> {email}
-      </p>
-      <p>
+      </DetailItem>
+      <DetailItem>
         <strong>Função:</strong> {role}
-      </p>
-      <button onClick={() => window.history.back()}>Voltar</button>
-    </div>
+      </DetailItem>
+      <Button onClick={() => window.history.back()}>Voltar</Button>
+    </DetailsContainer>
   );
 };
 

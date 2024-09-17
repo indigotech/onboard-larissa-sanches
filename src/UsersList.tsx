@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { USERS_QUERY } from './queries';
 import { useNavigate } from 'react-router-dom';
+import H1 from './components/H1';
+import Button from './components/Button';
+import styled from 'styled-components';
 
 interface User {
   id: string;
@@ -29,9 +32,55 @@ interface PageInput {
   limit: number;
 }
 
+const Container = styled.div`
+  padding: 16px;
+`;
+
+const UserList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+`;
+
+const UserListItem = styled.li`
+  padding: 12px 0;
+  transition: background-color 0.3s, color 0.3s;
+  cursor: pointer;
+
+  &:hover {
+    color: #007bff;
+  }
+
+  &:active {
+    color: #0056b3;
+  }
+`;
+
+const PaginationContainer = styled.div`
+  justify-content: center;
+  align-items: center;
+`;
+
+const PaginationButton = styled.button<{ disabled: boolean }>`
+  background-color: ${(props) => (props.disabled ? '#ddd' : '#007bff')};
+  color: ${(props) => (props.disabled ? '#666' : '#fff')};
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
+  font-size: 16px;
+
+  &:hover {
+    background-color: ${(props) => (props.disabled ? '#ddd' : '#0056b3')};
+  }
+`;
+
+const ErrorText = styled.p`
+  color: red;
+`;
+
 const UsersList: React.FC = () => {
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(20);
+  const [pageSize] = useState(10);
 
   const { loading, error, data, refetch } = useQuery<UsersData>(USERS_QUERY, {
     variables: {
@@ -75,46 +124,49 @@ const UsersList: React.FC = () => {
     }
 
     return (
-      <div>
-        <p style={{ color: 'red' }}>{errorMessage}</p>
-        <button onClick={handleRetry}>Tentar Novamente</button>
-      </div>
+      <Container>
+        <ErrorText>{errorMessage}</ErrorText>
+        <Button onClick={handleRetry}>Tentar Novamente</Button>
+      </Container>
     );
   }
 
   return (
-    <div>
-      <h2>Lista de Usuários</h2>
-      <ul>
+    <Container>
+      <H1>Lista de Usuários</H1>
+      <UserList>
         {data?.users?.nodes.length ? (
           data.users.nodes.map((user) => (
-            <li key={user.id}>
+            <UserListItem key={user.id}>
               <a
                 href={`/user/${user.id}`}
                 style={{ textDecoration: 'none', color: 'inherit' }}
               >
                 <strong>{user.name}</strong> - {user.email}
               </a>
-            </li>
+            </UserListItem>
           ))
         ) : (
           <p>Não há usuários para exibir.</p>
         )}
-      </ul>
-      <div>
-        <button onClick={handlePreviousPage} disabled={page === 1}>
+      </UserList>
+      <PaginationContainer>
+        <PaginationButton onClick={handlePreviousPage} disabled={page === 1}>
           Anterior
-        </button>
-        <span>{`${page} de ${totalPages} páginas`}</span>
-        <button
+        </PaginationButton>
+        <span>
+          {' '}
+          {page} de {totalPages} páginas{' '}
+        </span>
+        <PaginationButton
           onClick={handleNextPage}
           disabled={!data?.users?.pageInfo.hasNextPage}
         >
           Próxima
-        </button>
-      </div>
-      <button onClick={() => navigate('/add-user')}>Adicionar Usuário</button>
-    </div>
+        </PaginationButton>
+      </PaginationContainer>
+      <Button onClick={() => navigate('/add-user')}>Adicionar Usuário</Button>
+    </Container>
   );
 };
 
