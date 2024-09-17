@@ -4,8 +4,8 @@ import { CREATE_USER_MUTATION } from './mutations';
 import { useNavigate } from 'react-router-dom';
 import Button from './components/Button';
 import H1 from './components/H1';
-import FormField from './components/FormField'; // Importando FormField
-import SelectField from './components/SelectField'; // Importando SelectField
+import FormField from './components/FormField';
+import SelectField from './components/SelectField';
 
 const MAX_BIRTH_DATE = new Date().toISOString().split('T')[0];
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
